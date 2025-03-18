@@ -1,0 +1,4 @@
+var searchData=
+[
+  ['computing_0',['2021-5-Computing',['../md_README.html',1,'']]]
+];
