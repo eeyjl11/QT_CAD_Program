@@ -1,0 +1,10 @@
+ [Desktop Entry]
+Type=Application
+Version=1.0
+Name=qtvtkviewer
+Comment=QT 3D Model viewer powered by VTK
+Path=/opt/qtvtkviewer/
+Exec=bin/qtvtkviewer
+Icon=QTViewer
+Terminal=false
+Categories=Education;

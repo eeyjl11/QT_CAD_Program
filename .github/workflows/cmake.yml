@@ -1,0 +1,55 @@
+name: CMake
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  OUR_CMAKE_VERSION: 3.22.4
+
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install cmake
+      run: wget https://github.com/Kitware/CMake/releases/download/v$OUR_CMAKE_VERSION/cmake-$OUR_CMAKE_VERSION-linux-x86_64.tar.gz && tar xzf ./cmake-$OUR_CMAKE_VERSION-linux-x86_64.tar.gz && chmod +x ./cmake-$OUR_CMAKE_VERSION-linux-x86_64/bin/cmake
+
+    - name: Configure CMake
+      run: mkdir build && cd build && ../cmake-$OUR_CMAKE_VERSION-linux-x86_64/bin/cmake -G Ninja -DCMAKE_BUILD_TYPE=Release ..
+      
+    - name: Build
+      run: cd build && ../cmake-$OUR_CMAKE_VERSION-linux-x86_64/bin/cmake --build .
+
+    - name: Build Libary Tests
+      run: mkdir ./ModelLibrary/tests/build && ./cmake-$OUR_CMAKE_VERSION-linux-x86_64/bin/cmake -B ./ModelLibrary/tests/build -S ./ModelLibrary/tests && cd ./ModelLibrary/tests/build && make
+      
+    - name: Run Libary Tests
+      run: cd ./ModelLibrary/tests/build && ./test_ourmodelib $GITHUB_WORKSPACE/ModelLibrary/examples/ExampleModel1.mod ./output.mod
+      
+    - name: Create Package
+      run: cd build && ../cmake-$OUR_CMAKE_VERSION-linux-x86_64/bin/cpack -G DEB 
+
+    - name: Upload to artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: Linux builds
+        path: _packages/*.deb
+    
+    - name: Set outputs
+      id: vars
+      run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+        
+    - name: Check SHORT SHA
+      run: echo ${{ steps.vars.outputs.sha_short }}
+
+    - name: Upload to releases
+      uses: svenstaro/upload-release-action@v2
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: _packages/*.deb
+        tag: ${{ steps.vars.outputs.sha_short }}
+        file_glob: true

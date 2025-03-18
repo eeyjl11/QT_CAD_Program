@@ -1,0 +1,46 @@
+build*
+!build.sh
+*.so*
+Makefile
+CMakeCache.txt
+CMakeFiles
+*CMakeLists.txt.user
+.vscode
+*.cmake
+!package_conf/*.cmake
+*.cbp
+output.mod
+html
+latex
+Doxyfile.bak
+_packages
+
+
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
